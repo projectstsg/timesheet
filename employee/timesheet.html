@@ -391,7 +391,7 @@ function addTask() {
     formData.append("employee_id", userId);
     formData.append("week_start_date", currentWeekStartDate);
 
-    fetch("http://localhost:8080/digitalteam_timesheet/api/save_task.php", {
+    fetch("api/save_task.php", {
         method: "POST",
         body: formData
     })
@@ -417,7 +417,7 @@ function addTask() {
 function fetchTasks() {
     const userId = sessionStorage.getItem("employeeId");
 
-    fetch(`/digitalteam_timesheet/api/fetch_timesheet.php?employee_id=${userId}&week_start_date=${currentWeekStartDate}`)
+    fetch(`api/fetch_timesheet.php?employee_id=${userId}&week_start_date=${currentWeekStartDate}`)
     .then(response => response.json())
     .then(data => {
         console.log("Fetched Tasks:", data);
