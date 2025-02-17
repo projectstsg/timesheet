@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json");
-include_once("employee/api/config/db_connect.php");
+include_once("config/db_connect.php");
 
 $response = ["status" => "error", "message" => "An unknown error occurred."];
 
