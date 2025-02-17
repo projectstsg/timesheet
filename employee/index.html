@@ -106,7 +106,7 @@
     formData.append("email", userEmail);
     formData.append("employee_id", employeeId);
 
-    fetch("/digitalteam_timesheet/employee/api/insert_user.php", {
+    fetch("employee/api/insert_user.php", {
 
         method: "POST",
         body: formData
