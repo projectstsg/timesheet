@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Team Time Sheet</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f2f2f2; /* Outer grey background */
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 40px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #e0e0e0; /* Light grey background */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Week Date Display */
+        .week-date {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            padding: 12px 18px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .week-date:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(30, 60, 114, 0.5);
+        }
+
+        /* Task Form */
+        .task-form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .task-form input,
+        .task-form select,
+        .task-form button {
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .task-form input:focus,
+        .task-form select:focus {
+            border-color: #1e3c72;
+            box-shadow: 0 0 8px rgba(30, 60, 114, 0.4);
+            outline: none;
+        }
+
+        .task-form button {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .task-form button:hover {
+            background: linear-gradient(135deg, #163161, #214c8a);
+            transform: scale(1.05);
+        }
+
+        /* Board Layout */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        /* Day Columns */
+        .day-column {
+            background: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            min-height: 280px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .day-column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Day Titles */
+        .day-column h2 {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 14px;
+            border-radius: 6px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 8px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .day-column h2:hover {
+            background: linear-gradient(135deg, #163161, #214c8a);
+            transform: scale(1.05);
+        }
+
+        /* Date Label */
+        .date-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            background: #eef1f6;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        /* Task Box */
+        .task {
+            background: linear-gradient(135deg, rgba(30, 60, 114, 0.9), rgba(42, 82, 152, 0.9));
+            color: white;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 10px;
+            text-align: left;
+            width: 95%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .task:hover {
+            transform: scale(1.05);
+        }
+        
+
+        /* Task Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation Buttons */
+        .navigation-buttons {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        #prevWeekBtn,
+        #nextWeekBtn {
+            padding: 14px 22px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #prevWeekBtn {
+            background: linear-gradient(135deg, #e44d26, #ff6b35);
+            color: white;
+        }
+
+        #prevWeekBtn:hover {
+            background: linear-gradient(135deg, #c43d1b, #ff5722);
+            transform: scale(1.05);
+        }
+
+        #nextWeekBtn {
+            background: linear-gradient(135deg, #009688, #00796B);
+            color: white;
+        }
+
+        #nextWeekBtn:hover {
+            background: linear-gradient(135deg, #00796B, #005f56);
+            transform: scale(1.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .board {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .task-form {
+                flex-direction: column;
+            }
+
+            .task-form input,
+            .task-form select,
+            .task-form button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .board {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <h1>📊 Digital Team Time Sheet</h1>
+        <p id="weekRange" class="week-date"></p>  <!-- Weekly Date Display -->
+
+        <!-- Task Input Form -->
+        <div class="task-form">
+            <input type="text" id="taskName" placeholder="Task Name" required>
+            
+            <select id="taskDay">
+                <option value="">Select Day</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+            </select>
+        
+            <input type="number" id="hoursUtilized" placeholder="Hours Used" required>
+        
+            <button onclick="addTask()">Add Task</button>
+        </div>
+      
+
+        <!-- Weekly Task Board -->
+        <div class="board" id="currentWeek">
+            <div class="day-column" id="Monday">
+                <h2>Monday</h2>
+                <p class="date-label"></p> <!-- Date Display -->
+                <div class="task-list"></div>
+            </div>
+            <div class="day-column" id="Tuesday">
+                <h2>Tuesday</h2>
+                <p class="date-label"></p>
+                <div class="task-list"></div>
+            </div>
+            <div class="day-column" id="Wednesday">
+                <h2>Wednesday</h2>
+                <p class="date-label"></p>
+                <div class="task-list"></div>
+            </div>
+            <div class="day-column" id="Thursday">
+                <h2>Thursday</h2>
+                <p class="date-label"></p>
+                <div class="task-list"></div>
+            </div>
+            <div class="day-column" id="Friday">
+                <h2>Friday</h2>
+                <p class="date-label"></p>
+                <div class="task-list"></div>
+            </div>
+            <div class="day-column" id="Saturday">
+                <h2>Saturday</h2>
+                <p class="date-label"></p>
+                <div class="task-list"></div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+            <button id="prevWeekBtn" onclick="showPreviousWeek()">Previous Week</button>
+            <button id="nextWeekBtn" onclick="showNextWeek()">Next Week</button>
+        </div>
+
+    </div>
+
+   <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    setWeekDates();
+    fetchTasks();
+    
+    // Logout event listener
+    document.getElementById("logoutButton").addEventListener("click", () => {
+        window.location.href = "logout.php";
+    });
+});
+
+let currentWeekStartDate = new Date();
+let tasksByWeek = {};
+
+// Function to set weekly date range
+function setWeekDates(weekStart = new Date()) {
+    const startDate = new Date(weekStart);
+    startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
+    
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 5);
+
+    const formattedStart = startDate.toLocaleDateString("en-GB");
+    const formattedEnd = endDate.toLocaleDateString("en-GB");
+
+    document.getElementById("weekRange").innerText = `📅 ${formattedStart} - ${formattedEnd}`;
+
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    let currentDate = new Date(startDate);
+
+    days.forEach(day => {
+        const dateLabel = document.querySelector(`#${day} .date-label`);
+        if (dateLabel) {
+            dateLabel.innerText = currentDate.toLocaleDateString("en-GB");
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+    });
+
+    currentWeekStartDate = startDate.toISOString().split('T')[0];
+    fetchTasks(); // Fetch tasks again when changing weeks
+}
+
+// Navigate weeks
+function showPreviousWeek() {
+    updateWeek(-7);
+}
+
+function showNextWeek() {
+    updateWeek(7);
+}
+
+function updateWeek(days) {
+    const newWeekStartDate = new Date(currentWeekStartDate);
+    newWeekStartDate.setDate(newWeekStartDate.getDate() + days);
+    setWeekDates(newWeekStartDate);
+}
+
+// Function to add a task
+function addTask() {
+    const taskName = document.getElementById("taskName").value.trim();
+    const taskDay = document.getElementById("taskDay").value;
+    const hoursUtilized = parseFloat(document.getElementById("hoursUtilized").value.trim());
+    const userId = sessionStorage.getItem("employeeId");
+
+    if (!taskName || !taskDay || isNaN(hoursUtilized)) {
+        return alert("Please fill in all fields correctly!");
+    }
+
+    if (hoursUtilized > 8) {
+        alert("You cannot enter more than 8 hours!");
+        document.getElementById("hoursUtilized").value = 8;
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("task_name", taskName);
+    formData.append("task_day", taskDay);
+    formData.append("hours_utilized", hoursUtilized);
+    formData.append("employee_id", userId);
+    formData.append("week_start_date", currentWeekStartDate);
+
+    fetch("http://localhost:8080/digitalteam_timesheet/api/save_task.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Task added successfully!");
+            document.getElementById("taskName").value = "";
+            document.getElementById("taskDay").selectedIndex = 0;
+            document.getElementById("hoursUtilized").value = "";
+            fetchTasks();
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Fetch Error:", error);
+        alert("Something went wrong. Please try again.");
+    });
+}
+
+// Function to fetch tasks from database
+function fetchTasks() {
+    const userId = sessionStorage.getItem("employeeId");
+
+    fetch(`/digitalteam_timesheet/api/fetch_timesheet.php?employee_id=${userId}&week_start_date=${currentWeekStartDate}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log("Fetched Tasks:", data);
+
+        // Clear previous task lists
+        document.querySelectorAll(".task-list").forEach(list => list.innerHTML = "");
+
+        if (data.status !== "success" || !Array.isArray(data.tasks)) {
+            console.log("No tasks available!");
+            return;
+        }
+
+        data.tasks.forEach(task => {
+            const taskDiv = document.createElement("div");
+            taskDiv.classList.add("task");
+            taskDiv.innerHTML = `
+                <strong>${task.task_name}</strong><br>
+                Hours: ${task.hours_utilized}
+            `;
+
+            const taskList = document.querySelector(`#${task.task_day} .task-list`);
+            if (taskList) {
+                taskList.appendChild(taskDiv);
+            } else {
+                console.error("Task list not found for", task.task_day);
+            }
+        });
+    })
+    .catch(error => console.error("Fetch Error:", error));
+}
+
+
+</script>
+
+
+
+<button id="logoutButton">Logout</button>
+
+<style>
+  #logoutButton {
+    background-color: #dc3545; /* Red color */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;
+    margin: 5px auto;
+    text-align: center;
+    transition: background 0.3s ease-in-out;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#logoutButton:hover {
+    background-color: #c82333; /* Darker red */
+}
+
+</style>
+
+
+
+    
+</body>
+</html>
+          
